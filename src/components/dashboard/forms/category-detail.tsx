@@ -1,4 +1,5 @@
 "use client";
+import ImageUpload from "@/components/dashboard/shared/image-upload";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,7 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
       featured: data?.featured || false,
       name: data?.name || "",
       url: data?.url || "",
+      image: data?.url ? [{ url: data.url }] : [],
     },
   });
   useEffect(() => {
@@ -72,6 +74,30 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
               })}
               className="space-y-4"
             >
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ImageUpload
+                        type="cover"
+                        value={field.value.map((image) => image.url)}
+                        disabled={isLoading}
+                        onChange={(url) => field.onChange([{ url }])}
+                        onRemove={(url) =>
+                          field.onChange([
+                            ...field.value.filter(
+                              (current) => current.url !== url
+                            ),
+                          ])
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 disabled={isLoading}
                 control={form.control}
