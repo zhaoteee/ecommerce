@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider afterMultiSessionSingleSignOutUrl="/">
       <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.className} ${barlowFont.variable}`}>
           <ThemeProvider

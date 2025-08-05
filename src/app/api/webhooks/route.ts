@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         email: data.email_addresses[0].email_address,
         picture: data.image_url,
       };
-      console.log(user);
+      console.log(user, evt.type);
       const dbUser = await db.user.upsert({
         where: {
           email: user.email,
@@ -27,13 +27,13 @@ export async function POST(req: NextRequest) {
           name: user.name || "",
           email: user.email || "",
           picture: user.picture || "",
-          role: user.role || "USER",
+          role: user.role || "SELLER",
         },
       });
       const client = await clerkClient();
       await client.users.updateUserMetadata(evt.data.id, {
         privateMetadata: {
-          role: dbUser.role || "USER",
+          role: dbUser.role || "SELLER",
         },
       });
     }
