@@ -22,12 +22,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Category } from "@/generated/prisma";
 import { CategoryFormSchema } from "@/lib/schemas";
+import { upsertCategory } from "@/queries/category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CategoryDetail = ({ data }: { data?: Category }) => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof CategoryFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(CategoryFormSchema),
@@ -35,7 +39,7 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
       featured: data?.featured || false,
       name: data?.name || "",
       url: data?.url || "",
-      image: data?.url ? [{ url: data.url }] : [],
+      image: data?.image ? [{ url: data.image }] : [],
     },
   });
   useEffect(() => {
@@ -48,8 +52,30 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
       });
     }
   }, [data, form]);
-  const handleSubmit = (values: z.infer<typeof CategoryFormSchema>) => {
-    console.log(values);
+  const handleSubmit = async () => {
+    const values = form.getValues();
+    try {
+      const res = await upsertCategory({
+        id: data?.id ? data.id : "",
+        name: values.name,
+        image: values.image[0].url,
+        url: values.url,
+        featured: values.featured,
+      });
+      toast("Category has been created", {
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      });
+      if (data?.id) {
+        router.refresh();
+      } else {
+        router.push("/dashboard/admin/categories");
+      }
+    } catch (error) {
+      toast(error as string);
+    }
   };
   const isLoading = form.formState.isSubmitting;
 
@@ -67,11 +93,7 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
         <CardContent>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit((v) => {
-                console.log("表单错误信息:", form.formState.errors);
-                console.log("表单值:", v);
-                handleSubmit(v);
-              })}
+              onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-4"
             >
               <FormField
@@ -147,15 +169,7 @@ const CategoryDetail = ({ data }: { data?: Category }) => {
                   </FormItem>
                 )}
               ></FormField>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                onClick={() => {
-                  console.log("当前表单值:", form.getValues());
-                  console.log("当前表单错误:", form.formState.errors);
-                  console.log("表单是否有效:", form.formState.isValid);
-                }}
-              >
+              <Button type="submit" disabled={isLoading}>
                 {isLoading
                   ? "loading..."
                   : data?.id

@@ -3,6 +3,8 @@ import { Inter, Barlow } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
+import ModalProvider from "@/providers/modal-provider";
 const geistSans = Inter({
   subsets: ["latin"],
 });
@@ -33,7 +35,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <Toaster />
+            <ModalProvider>{children}</ModalProvider>
           </ThemeProvider>
         </body>
       </html>

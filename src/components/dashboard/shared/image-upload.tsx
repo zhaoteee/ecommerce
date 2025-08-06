@@ -41,7 +41,6 @@ const ImageUpload: FC<ImageUploadProps> = ({
       return () => clearTimeout(timer); // Clean up timer if the component unmounts or error changes
     }
   }, [error]);
-  console.log(value);
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -58,7 +57,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
     return (
       <div
         className={cn(
-          "relative  rounded-full w-52 h-52  bg-gray-200 border-2 border-white shadow-2xl overflow-visible",
+          "relative z-500  rounded-full w-52 h-52  bg-gray-200 border-2 border-white shadow-2xl overflow-visible",
           {
             "bg-red-100": error,
             "animate-pulse": isBouncing,
@@ -107,13 +106,13 @@ const ImageUpload: FC<ImageUploadProps> = ({
     return (
       <div
         className={cn(
-          "relative w-full bg-gray-100 rounded-lg bg-gradient-to-b from-gray-100 via-gray-100 to-gray-400 overflow-hidden",
+          "relative z-500 w-full bg-gray-100 rounded-lg bg-gradient-to-b from-gray-100 via-gray-100 to-gray-400 overflow-hidden",
           {
             "from-red-100 to-red-200 ": error,
             "animate-bounce": isBouncing,
           }
         )}
-        style={{ height: "348px" }}
+        style={{ height: "200px" }}
       >
         {value.length > 0 && (
           <Image
@@ -164,7 +163,7 @@ const ImageUpload: FC<ImageUploadProps> = ({
             value.map((imageUrl) => (
               <div
                 key={imageUrl}
-                className="relative w-[200px] min-h-[100px] max-h-[200px]"
+                className="relative z-500 w-[200px] min-h-[100px] max-h-[200px]"
               >
                 {/* Delete image btn */}
                 <div className="z-10 absolute top-2 right-2">
